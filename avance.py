@@ -19,15 +19,6 @@ import os
 # - Literales (INTEGER, FLOAT, STRING)
 # ============================================================
 
-# ============================================================
-# APORTE: Zahid Díaz (LockHurb)
-# Componentes: 
-# - Variables de instancia ($this->variable)
-# - Operadores de asignación compuesta (+=, -=, *=, /=, .=)
-# - Palabras reservadas
-# - Delimitadores de objetos (->)
-# ============================================================
-
 # Palabras reservadas
 reserved_andres = {
     'if': 'IF',
@@ -96,6 +87,64 @@ tokens_andres = [
 ]
 
 # ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Componentes: 
+# - Variables de instancia ($this->variable)
+# - Operadores de asignación compuesta (+=, -=, *=, /=, .=)
+# - Palabras reservadas
+# - Delimitadores de objetos (->)
+# ============================================================
+
+reserved_zahid = {
+    'extends': 'EXTENDS',
+    'implements': 'IMPLEMENTS',
+    'interface': 'INTERFACE',
+    'abstract': 'ABSTRACT',
+    'final': 'FINAL',
+    'const': 'CONST',
+    'trait': 'TRAIT',
+    'use': 'USE',
+    'namespace': 'NAMESPACE',
+    'as': 'AS',
+    'instanceof': 'INSTANCEOF',
+    'throw': 'THROW',
+    'try': 'TRY',
+    'catch': 'CATCH',
+    'finally': 'FINALLY',
+    'require': 'REQUIRE',
+    'include': 'INCLUDE',
+    'require_once': 'REQUIRE_ONCE',
+    'include_once': 'INCLUDE_ONCE',
+}
+
+#Tokens Zahid
+tokens_zahid = [
+    'THIS_VAR',  #Variables de instancia
+    'OBJECT_OP', #Operador para objetos
+    'PLUS_ASSIGN',
+    'MINUS_ASSIGN',
+    'TIMES_ASSIGN',
+    'DIVIDE_ASSIGN',
+    'CONCAT_ASSIGN',
+]
+
+# ============================================================
+# REGLAS DE TOKENS
+# ============================================================
+
+t_PLUS_ASSIGN = r'\+='
+t_MINUS_ASSIGN = r'-='
+t_TIMES_ASSIGN = r'\*='
+t_DIVIDE_ASSIGN = r'/='
+t_CONCAT_ASSIGN = r'\.='
+t_OBJECT_OP = r'->'
+
+#Función de variable de instancia
+def t_THIS_VAR(t):
+    r'\$this->([a-zA-Z_][a-zA-Z0-9_]*)'
+    return t
+
+# ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
 # Componentes: 
 # - Variables superglobales ($GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV)
@@ -120,7 +169,7 @@ tokens_yadira = [
 ]
 
 # Combinar todas las palabras reservadas
-reserved = {**reserved_andres}
+reserved = {**reserved_andres, **reserved_zahid}
 
 # Combinar todos los tokens
 tokens = tokens_andres + tokens_yadira + list(reserved.values())
