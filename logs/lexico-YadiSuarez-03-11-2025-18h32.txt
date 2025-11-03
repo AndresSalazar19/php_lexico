@@ -1,0 +1,176 @@
+================================================================================
+ANÁLISIS LÉXICO - PHP
+Integrante: Yadira Suárez
+Usuario GitHub: YadiSuarez
+Fecha y Hora: 03/11/2025 18:32:53
+================================================================================
+
+CÓDIGO ANALIZADO:
+--------------------------------------------------------------------------------
+<?php
+// Variables normales y primitivas
+$bool_true = true;
+$bool_false = false;
+$var_null = null;
+$decimal = 3.42;
+$entero = 42;
+$string_simple = "Hello, World!";
+$string_complejo = 'PHP is fun!';
+$string_anidado = "Esto es 'un ejemplo' con comillas";
+
+// Superglobales
+$_POST['username'] = "admin";
+$_SESSION['id'] = 123;
+$_GET['action'] = 'login';
+$_COOKIE['session'] = 'abcd';
+$_SERVER['REQUEST_METHOD'] = 'POST';
+$_FILES['file'] = null;
+$_REQUEST['q'] = 'buscar';
+$_ENV['PATH'] = '/usr/bin';
+$GLOBALS['globalVar'] = 100;
+
+// Operadores lógicos
+$logico1 = $_GET && false || !true xor true;
+$logico2 = $_POST or $bool_true and !$bool_false;
+
+// Comentarios
+/* Comentario multilínea simple
+   que debería ser ignorado por el lexer */
+/** Comentario multilínea con asteriscos **/
+/* Comentario multilínea anidado /* aún ignorado */ 
+
+// Comentarios de línea
+// Este es un comentario de línea
+# Otro comentario de línea
+
+?>
+
+--------------------------------------------------------------------------------
+
+TOKENS RECONOCIDOS: 117
+--------------------------------------------------------------------------------
+#     TIPO                 VALOR                          LÍNEA     
+--------------------------------------------------------------------------------
+1     PHP_OPEN             <?php                          1         
+2     VARIABLE             $bool_true                     3         
+3     ASSIGN               =                              3         
+4     BOOL                 True                           3         
+5     SEMICOLON            ;                              3         
+6     VARIABLE             $bool_false                    4         
+7     ASSIGN               =                              4         
+8     BOOL                 False                          4         
+9     SEMICOLON            ;                              4         
+10    VARIABLE             $var_null                      5         
+11    ASSIGN               =                              5         
+12    NULL                 None                           5         
+13    SEMICOLON            ;                              5         
+14    VARIABLE             $decimal                       6         
+15    ASSIGN               =                              6         
+16    FLOAT                3.42                           6         
+17    SEMICOLON            ;                              6         
+18    VARIABLE             $entero                        7         
+19    ASSIGN               =                              7         
+20    INTEGER              42                             7         
+21    SEMICOLON            ;                              7         
+22    VARIABLE             $string_simple                 8         
+23    ASSIGN               =                              8         
+24    STRING               Hello, World!                  8         
+25    SEMICOLON            ;                              8         
+26    VARIABLE             $string_complejo               9         
+27    ASSIGN               =                              9         
+28    STRING               PHP is fun!                    9         
+29    SEMICOLON            ;                              9         
+30    VARIABLE             $string_anidado                10        
+31    ASSIGN               =                              10        
+32    STRING               Esto es 'un ejemplo' con co... 10        
+33    SEMICOLON            ;                              10        
+34    SUPERGLOBALS         _POST                          13        
+35    LBRACKET             [                              13        
+36    STRING               username                       13        
+37    RBRACKET             ]                              13        
+38    ASSIGN               =                              13        
+39    STRING               admin                          13        
+40    SEMICOLON            ;                              13        
+41    SUPERGLOBALS         _SESSION                       14        
+42    LBRACKET             [                              14        
+43    STRING               id                             14        
+44    RBRACKET             ]                              14        
+45    ASSIGN               =                              14        
+46    INTEGER              123                            14        
+47    SEMICOLON            ;                              14        
+48    SUPERGLOBALS         _GET                           15        
+49    LBRACKET             [                              15        
+50    STRING               action                         15        
+51    RBRACKET             ]                              15        
+52    ASSIGN               =                              15        
+53    STRING               login                          15        
+54    SEMICOLON            ;                              15        
+55    SUPERGLOBALS         _COOKIE                        16        
+56    LBRACKET             [                              16        
+57    STRING               session                        16        
+58    RBRACKET             ]                              16        
+59    ASSIGN               =                              16        
+60    STRING               abcd                           16        
+61    SEMICOLON            ;                              16        
+62    SUPERGLOBALS         _SERVER                        17        
+63    LBRACKET             [                              17        
+64    STRING               REQUEST_METHOD                 17        
+65    RBRACKET             ]                              17        
+66    ASSIGN               =                              17        
+67    STRING               POST                           17        
+68    SEMICOLON            ;                              17        
+69    SUPERGLOBALS         _FILES                         18        
+70    LBRACKET             [                              18        
+71    STRING               file                           18        
+72    RBRACKET             ]                              18        
+73    ASSIGN               =                              18        
+74    NULL                 None                           18        
+75    SEMICOLON            ;                              18        
+76    SUPERGLOBALS         _REQUEST                       19        
+77    LBRACKET             [                              19        
+78    STRING               q                              19        
+79    RBRACKET             ]                              19        
+80    ASSIGN               =                              19        
+81    STRING               buscar                         19        
+82    SEMICOLON            ;                              19        
+83    SUPERGLOBALS         _ENV                           20        
+84    LBRACKET             [                              20        
+85    STRING               PATH                           20        
+86    RBRACKET             ]                              20        
+87    ASSIGN               =                              20        
+88    STRING               /usr/bin                       20        
+89    SEMICOLON            ;                              20        
+90    SUPERGLOBALS         GLOBALS                        21        
+91    LBRACKET             [                              21        
+92    STRING               globalVar                      21        
+93    RBRACKET             ]                              21        
+94    ASSIGN               =                              21        
+95    INTEGER              100                            21        
+96    SEMICOLON            ;                              21        
+97    VARIABLE             $logico1                       24        
+98    ASSIGN               =                              24        
+99    SUPERGLOBALS         _GET                           24        
+100   AND_OP               &&                             24        
+101   BOOL                 False                          24        
+102   OR_OP                ||                             24        
+103   NOT_OP               !                              24        
+104   BOOL                 True                           24        
+105   XOR_OP               xor                            24        
+106   BOOL                 True                           24        
+107   SEMICOLON            ;                              24        
+108   VARIABLE             $logico2                       25        
+109   ASSIGN               =                              25        
+110   SUPERGLOBALS         _POST                          25        
+111   OR_OP                or                             25        
+112   VARIABLE             $bool_true                     25        
+113   AND_OP               and                            25        
+114   NOT_OP               !                              25        
+115   VARIABLE             $bool_false                    25        
+116   SEMICOLON            ;                              25        
+117   PHP_CLOSE            ?>                             36        
+
+================================================================================
+✓ ANÁLISIS COMPLETADO SIN ERRORES LÉXICOS
+================================================================================
+FIN DEL ANÁLISIS
+================================================================================

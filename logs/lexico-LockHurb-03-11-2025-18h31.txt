@@ -2,7 +2,7 @@
 ANÁLISIS LÉXICO - PHP
 Integrante: Zahid Díaz
 Usuario GitHub: LockHurb
-Fecha y Hora: 03/11/2025 18:29:34
+Fecha y Hora: 03/11/2025 18:31:37
 ================================================================================
 
 CÓDIGO ANALIZADO:
