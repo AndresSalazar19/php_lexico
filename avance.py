@@ -19,6 +19,15 @@ import os
 # - Literales (INTEGER, FLOAT, STRING)
 # ============================================================
 
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Componentes: 
+# - Variables de instancia ($this->variable)
+# - Operadores de asignación compuesta (+=, -=, *=, /=, .=)
+# - Palabras reservadas
+# - Delimitadores de objetos (->)
+# ============================================================
+
 # Palabras reservadas
 reserved_andres = {
     'if': 'IF',
@@ -40,6 +49,9 @@ reserved_andres = {
     'private': 'PRIVATE',
     'protected': 'PROTECTED',
     'static': 'STATIC',
+    'true': 'TRUE',
+    'false': 'FALSE',
+    'null': 'NULL',
     'echo': 'ECHO',
     'array': 'ARRAY',
     'define': 'DEFINE',
@@ -71,6 +83,9 @@ tokens_andres = [
     'RBRACKET',          # ]
     'COMMA',             # ,
     'ASSIGN',            # =
+    'INTEGER',           # 123
+    'FLOAT',             # 123.45
+    'STRING',            # "texto" o 'texto'
     'PHP_OPEN',          # <?php
     'PHP_CLOSE',         # ?>
     'DOT',               # . (concatenación)
@@ -258,6 +273,7 @@ def t_error(t):
 # ============================================================
 # CONSTRUCCIÓN DEL LEXER
 # ============================================================
+
 lexer = lex.lex()
 
 # ============================================================
@@ -340,6 +356,7 @@ def analizar_archivo(ruta_archivo, integrante, usuario_git='AndresSazalar19'):
     lexer_local = lex.lex() 
     lexer_local.input(codigo)
     tokens_encontrados = []
+    errores = []
     
     print("Procesando tokens...\n")
     print(f"{'TIPO':<20} {'VALOR':<35} {'LÍNEA':<10}")
