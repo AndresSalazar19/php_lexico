@@ -2,7 +2,7 @@
 ANÁLISIS LÉXICO - PHP
 Integrante: Yadira Suárez
 Usuario GitHub: YadiSuarez
-Fecha y Hora: 03/11/2025 18:32:53
+Fecha y Hora: 03/11/2025 18:34:01
 ================================================================================
 
 CÓDIGO ANALIZADO:

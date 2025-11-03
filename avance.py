@@ -157,10 +157,6 @@ t_OBJECT_OP = r'->'
 
 tokens_yadira = [
     'SUPERGLOBALS',  # $GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV
-    'INTEGER',           # 123
-    'FLOAT',             # 123.45
-    'STRING',            # "texto" o 'texto'
-    'NULL',              # null
     'BOOL',              # true o false
 
     # Operadores lógicos
