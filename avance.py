@@ -132,17 +132,17 @@ tokens_zahid = [
 # REGLAS DE TOKENS
 # ============================================================
 
+#Función de variable de instancia
+def t_THIS_VAR(t):
+    r'\$this->([a-zA-Z_][a-zA-Z0-9_]*)'
+    return t
+
 t_PLUS_ASSIGN = r'\+='
 t_MINUS_ASSIGN = r'-='
 t_TIMES_ASSIGN = r'\*='
 t_DIVIDE_ASSIGN = r'/='
 t_CONCAT_ASSIGN = r'\.='
 t_OBJECT_OP = r'->'
-
-#Función de variable de instancia
-def t_THIS_VAR(t):
-    r'\$this->([a-zA-Z_][a-zA-Z0-9_]*)'
-    return t
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
@@ -172,7 +172,7 @@ tokens_yadira = [
 reserved = {**reserved_andres, **reserved_zahid}
 
 # Combinar todos los tokens
-tokens = tokens_andres + tokens_yadira + list(reserved.values())
+tokens = tokens_andres + tokens_yadira + tokens_zahid + list(reserved.values())
 
 # ============================================================
 # REGLAS DE TOKENS
@@ -381,7 +381,7 @@ def generar_log(codigo, integrante, tokens_encontrados, errores, usuario_git):
 # FUNCIÓN PRINCIPAL DE ANÁLISIS
 # ============================================================
 
-def analizar_archivo(ruta_archivo, integrante, usuario_git='AndresSazalar19'):
+def analizar_archivo(ruta_archivo, integrante, usuario_git='LockHurb'):
 
     print("\n" + "=" * 80)
     print(f"ANALIZADOR LÉXICO - PHP")
@@ -446,7 +446,7 @@ def analizar_archivo(ruta_archivo, integrante, usuario_git='AndresSazalar19'):
 
 if __name__ == '__main__':
     usuarios_info = [
-        ('tests/algoritmo_andres.php', 'Andrés Salazar', 'AndresSalazar19'),
+        ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb'),
         ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez')
     ]
 
@@ -460,6 +460,9 @@ if __name__ == '__main__':
         elif 'yadira' in archivo.lower():
             nombre = 'Yadira Suárez'
             usuario = 'YadiSuarez'
+        elif 'zahid' in archivo.lower():
+            nombre = 'Zahid Díaz'
+            usuario = 'LockHurb'
         else:
             nombre = 'Desconocido'
             usuario = 'UsuarioGit'
