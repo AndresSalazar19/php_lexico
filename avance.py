@@ -20,7 +20,7 @@ import os
 # ============================================================
 
 # Palabras reservadas
-reserved = {
+reserved_andres = {
     'if': 'IF',
     'else': 'ELSE',
     'elseif': 'ELSEIF',
@@ -47,3 +47,42 @@ reserved = {
     'array': 'ARRAY',
     'define': 'DEFINE',
 }
+
+# Lista de tokens
+tokens_andres = [
+    'VARIABLE',           # Variables estándar: $variable
+    'ID',                # Identificadores
+    'PLUS',              # +
+    'MINUS',             # -
+    'TIMES',             # *
+    'DIVIDE',            # /
+    'MOD',               # %
+    'POW',               # **
+    'EQ',                # ==
+    'IDENTICAL',         # ===
+    'NE',                # !=
+    'LT',                # <
+    'GT',                # >
+    'LE',                # <=
+    'GE',                # >=
+    'SEMICOLON',         # ;
+    'LBRACE',            # {
+    'RBRACE',            # }
+    'LPAREN',            # (
+    'RPAREN',            # )
+    'LBRACKET',          # [
+    'RBRACKET',          # ]
+    'COMMA',             # ,
+    'ASSIGN',            # =
+    'INTEGER',           # 123
+    'FLOAT',             # 123.45
+    'STRING',            # "texto" o 'texto'
+    'PHP_OPEN',          # <?php
+    'PHP_CLOSE',         # ?>
+    'DOT',               # . (concatenación)
+    'COLON',             # :
+    'ARROW',             # =>
+    'INCREMENT',         # ++
+    'DECREMENT',         # --
+]
+
