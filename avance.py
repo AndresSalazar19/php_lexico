@@ -74,8 +74,6 @@ tokens_andres = [
     'RBRACKET',          # ]
     'COMMA',             # ,
     'ASSIGN',            # =
-    'INTEGER',           # 123
-    'FLOAT',             # 123.45
     'STRING',            # "texto" o 'texto'
     'PHP_OPEN',          # <?php
     'PHP_CLOSE',         # ?>
@@ -158,6 +156,8 @@ t_OBJECT_OP = r'->'
 tokens_yadira = [
     'SUPERGLOBALS',  # $GLOBALS, $_GET, $_POST, $_SESSION, $_COOKIE, $_SERVER, $_FILES, $_REQUEST, $_ENV
     'BOOL',              # true o false
+    'INTEGER',           # 123
+    'FLOAT',             # 123.45
 
     # Operadores lógicos
     'AND_OP',             # && or 'and'
