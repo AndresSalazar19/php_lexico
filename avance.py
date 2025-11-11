@@ -37,39 +37,107 @@ def generar_log(codigo, integrante, tokens_encontrados, errores_lexicos, errores
 
         # ---- LÉXICO ----
         if modo in ["lexico", "sintactico"]:
+            f.write("═" * 90 + "\n")
             f.write("RESULTADOS DEL ANÁLISIS LÉXICO\n")
-            f.write("-" * 90 + "\n")
+            f.write("═" * 90 + "\n")
             f.write(f"Tokens reconocidos: {len(tokens_encontrados)}\n")
             f.write(f"Errores léxicos: {len(errores_lexicos)}\n")
+            f.write("-" * 90 + "\n")
+            f.write(f"{'#':<5} {'TIPO':<20} {'VALOR':<30} {'LÍNEA':<10}\n")
             f.write("-" * 90 + "\n")
 
             for i, tok in enumerate(tokens_encontrados, 1):
                 valor_str = str(tok.value)
-                if len(valor_str) > 25:
-                    valor_str = valor_str[:25] + "..."
-                f.write(f"{i:<4} {tok.type:<15} {valor_str:<28} Línea: {tok.lineno}\n")
+                if len(valor_str) > 27:
+                    valor_str = valor_str[:27] + "..."
+                f.write(f"{i:<5} {tok.type:<20} {valor_str:<30} {tok.lineno:<10}\n")
 
             if errores_lexicos:
-                f.write("\nERRORES LÉXICOS:\n")
+                f.write("\n" + "-" * 90 + "\n")
+                f.write("ERRORES LÉXICOS ENCONTRADOS:\n")
+                f.write("-" * 90 + "\n")
                 for e in errores_lexicos:
                     f.write(f"• {e}\n")
+            else:
+                f.write("\n✓ Análisis léxico completado sin errores\n")
+            
             f.write("\n")
 
         # ---- SINTÁCTICO ----
         if modo == "sintactico":
+            f.write("═" * 90 + "\n")
             f.write("RESULTADOS DEL ANÁLISIS SINTÁCTICO\n")
-            f.write("-" * 90 + "\n")
+            f.write("═" * 90 + "\n")
+            
             if errores_sintacticos:
                 f.write(f"✗ Se detectaron {len(errores_sintacticos)} errores sintácticos:\n")
-                for e in errores_sintacticos:
-                    f.write(f"• {e}\n")
+                f.write("-" * 90 + "\n")
+                for i, e in enumerate(errores_sintacticos, 1):
+                    f.write(f"{i}. {e}\n")
+                f.write("-" * 90 + "\n")
             else:
                 f.write("✓ Análisis sintáctico completado sin errores\n")
-                f.write(f"\nÁrbol sintáctico generado:\n{resultado}\n")
+                f.write("-" * 90 + "\n")
+                f.write("\nÁRBOL SINTÁCTICO GENERADO:\n")
+                f.write("-" * 90 + "\n")
+                f.write(formatear_arbol(resultado))
+                f.write("\n" + "-" * 90 + "\n")
 
-        f.write("=" * 90 + "\nFIN DEL ANÁLISIS\n" + "=" * 90 + "\n")
+        f.write("\n" + "=" * 90 + "\n")
+        f.write("FIN DEL ANÁLISIS\n")
+        f.write("=" * 90 + "\n")
 
     return nombre_log
+
+# ============================================================
+# FUNCIÓN PARA FORMATEAR EL ÁRBOL SINTÁCTICO
+# ============================================================
+
+def formatear_arbol(nodo, nivel=0, prefijo=""):
+    """
+    Formatea el árbol sintáctico de forma legible
+    """
+    if nodo is None:
+        return ""
+    
+    indent = "  " * nivel
+    resultado = ""
+    
+    if isinstance(nodo, tuple):
+        # Es un nodo con estructura
+        if len(nodo) > 0:
+            resultado += f"{indent}{prefijo}({nodo[0]}\n"
+            for i, hijo in enumerate(nodo[1:], 1):
+                es_ultimo = (i == len(nodo) - 1)
+                nuevo_prefijo = "└─ " if es_ultimo else "├─ "
+                resultado += formatear_arbol(hijo, nivel + 1, nuevo_prefijo)
+            resultado += f"{indent})\n"
+    elif isinstance(nodo, list):
+        # Es una lista de nodos
+        resultado += f"{indent}{prefijo}[\n"
+        for i, hijo in enumerate(nodo):
+            es_ultimo = (i == len(nodo) - 1)
+            nuevo_prefijo = "└─ " if es_ultimo else "├─ "
+            resultado += formatear_arbol(hijo, nivel + 1, nuevo_prefijo)
+        resultado += f"{indent}]\n"
+    elif isinstance(nodo, dict):
+        # Es un diccionario (para arrays asociativos)
+        resultado += f"{indent}{prefijo}{{\n"
+        items = list(nodo.items())
+        for i, (clave, valor) in enumerate(items):
+            es_ultimo = (i == len(items) - 1)
+            nuevo_prefijo = "└─ " if es_ultimo else "├─ "
+            resultado += f"{indent}  {nuevo_prefijo}{clave} => "
+            if isinstance(valor, (dict, list, tuple)):
+                resultado += "\n" + formatear_arbol(valor, nivel + 2, "")
+            else:
+                resultado += f"{valor}\n"
+        resultado += f"{indent}}}\n"
+    else:
+        # Es un valor primitivo
+        resultado += f"{indent}{prefijo}{repr(nodo)}\n"
+    
+    return resultado
 
 # ============================================================
 # FUNCIÓN PRINCIPAL DE ANÁLISIS
@@ -94,19 +162,31 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
         return
 
     # ====== FASE LÉXICA ======
+    print("Iniciando análisis léxico...\n")
     import lexico
     lexer_local = lex.lex(module=lexico)
     lexer_local.input(codigo)
     tokens_encontrados = []
-    errores_lexicos = []
+    errores_lexicos = list(lexico.errores) if hasattr(lexico, 'errores') else []
 
+    print(f"{'TIPO':<20} {'VALOR':<35} {'LÍNEA':<10}")
+    print("-" * 80)
+    
     while True:
         tok = lexer_local.token()
         if not tok:
             break
         tokens_encontrados.append(tok)
+        
+        # Mostrar token en consola
+        valor_str = str(tok.value)
+        if len(valor_str) > 32:
+            valor_str = valor_str[:32] + "..."
+        print(f"{tok.type:<20} {valor_str:<35} {tok.lineno:<10}")
 
+    print("\n" + "-" * 80)
     print(f"✓ Tokens reconocidos: {len(tokens_encontrados)}")
+    print(f"✓ Errores léxicos: {len(errores_lexicos)}")
 
     # Si solo se pide léxico, se termina aquí
     if modo == "lexico":
@@ -114,18 +194,29 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
             codigo, integrante, tokens_encontrados, errores_lexicos, [], None, usuario_git, modo
         )
         print(f"\n✓ Log léxico generado: logs/{nombre_log}")
+        print("=" * 80 + "\n")
         return tokens_encontrados
 
     # ====== FASE SINTÁCTICA ======
-    print("\nIniciando análisis sintáctico...\n")
-    import  sintactico
+    print("\n" + "=" * 80)
+    print("Iniciando análisis sintáctico...\n")
+    
+    import sintactico
     sintactico.errores_sintacticos.clear()
 
+    # Reiniciar el lexer para el parser
+    lexer_local = lex.lex(module=lexico)
     resultado = sintactico.parser.parse(codigo, lexer=lexer_local)
+    
+    print("\n" + "-" * 80)
     if sintactico.errores_sintacticos:
         print(f"✗ Errores sintácticos encontrados: {len(sintactico.errores_sintacticos)}")
+        for i, error in enumerate(sintactico.errores_sintacticos, 1):
+            print(f"  {i}. {error}")
     else:
         print("✓ Análisis sintáctico completado sin errores")
+        if resultado:
+            print("\n✓ Árbol sintáctico generado correctamente")
 
     # ====== LOG FINAL ======
     nombre_log = generar_log(
@@ -134,6 +225,8 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
     )
     print(f"\n✓ Log generado: logs/{nombre_log}")
     print("=" * 80 + "\n")
+    
+    return resultado
 
 # ============================================================
 # PROGRAMA PRINCIPAL
@@ -146,14 +239,20 @@ if __name__ == '__main__':
         ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb')
     ]
 
+    # Determinar archivo y modo
     if len(sys.argv) > 2:
         archivo = sys.argv[1]
         archivo = 'tests/' + archivo if not archivo.startswith('tests/') else archivo
         modo = sys.argv[2].lower()  # lexico o sintactico
+    elif len(sys.argv) > 1:
+        archivo = sys.argv[1]
+        archivo = 'tests/' + archivo if not archivo.startswith('tests/') else archivo
+        modo = 'sintactico'  # Por defecto sintáctico si solo se pasa el archivo
     else:
-        archivo, nombre, usuario = usuarios_info[1]
-        modo = 'lexico'
+        archivo, nombre, usuario = usuarios_info[0]
+        modo = 'sintactico'
 
+    # Determinar el usuario según el nombre del archivo
     if 'andres' in archivo.lower():
         nombre = 'Andrés Salazar'
         usuario = 'AndresSalazar19'
@@ -167,4 +266,8 @@ if __name__ == '__main__':
         nombre = 'Desconocido'
         usuario = 'UsuarioGit'
 
+    print(f"\nEjecutando análisis {modo}...")
+    print(f"   Archivo: {archivo}")
+    print(f"   Usuario: {usuario}")
+    
     analizar_php(archivo, nombre, usuario, modo)
