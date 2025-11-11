@@ -326,8 +326,8 @@ t_ignore = ' \t'
 # Manejo de errores
 errores = []
 def t_error(t):
-    mensaje = "Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'"
-    print(f"Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'")
+    mensaje = f"Error léxico en línea {t.lineno}, columna {t.lexpos}: Caracter ilegal '{t.value[0]}'"
+    print(mensaje)
     errores.append(mensaje)
     t.lexer.skip(1)
 

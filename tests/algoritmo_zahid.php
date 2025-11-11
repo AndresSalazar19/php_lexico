@@ -1,11 +1,144 @@
 <?php
-//Variables normales
-$nombre = "Zahid";
-$edad = 25;
-$activo = true;
-$precio = 100.50;
+// ============================================================
+// Archivo de prueba - Zahid Díaz (LockHurb)
+// Solo características implementadas en el analizador
+// ============================================================
 
-//Variables de instancia
+// 1. ARRAYS MULTIDIMENSIONALES
+echo "=== Arrays Multidimensionales ===";
+$matriz = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+$anidado = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]];
+$mixto = [1, [2, 3], ["a" => 4, "b" => 5]];
+$vacio = [[], [], []];
+
+// 2. SWITCH-CASE
+echo "=== Switch-Case ===";
+$opcion = 2;
+switch ($opcion) {
+    case 1:
+        echo "Opcion uno";
+        break;
+    case 2:
+        echo "Opcion dos";
+        break;
+    case 3:
+        echo "Opcion tres";
+        break;
+    default:
+        echo "Otra opcion";
+        break;
+}
+
+$dia = 5;
+switch ($dia) {
+    case 1:
+        $nombre = "Lunes";
+    case 2:
+        $nombre = "Martes";
+    default:
+        $nombre = "Otro";
+}
+
+// Switch solo con default
+switch ($x) {
+    default:
+        echo "Default";
+        break;
+}
+
+// 3. FUNCIONES CON PARÁMETROS OPCIONALES
+echo "=== Funciones con Parametros Opcionales ===";
+
+function saludar($nombre, $saludo = "Hola") {
+    return $saludo;
+}
+
+function calcular($a, $b = 10, $c = 5) {
+    return $a + $b + $c;
+}
+
+function config($debug = true, $verbose = false, $log = true) {
+    return $debug;
+}
+
+function procesar($datos, $modo = 1) {
+    $resultado = $datos + $modo;
+    return $resultado;
+}
+
+// 4. FUNCIONES LAMBDA (ANÓNIMAS)
+echo "=== Funciones Lambda ===";
+
+$suma = function($a, $b) {
+    return $a + $b;
+};
+
+$resta = function($x, $y) {
+    $resultado = $x - $y;
+    return $resultado;
+};
+
+$multiplicador = 5;
+$multiplicar = function($n) use ($multiplicador) {
+    return $n;
+};
+
+$x = 10;
+$y = 20;
+$operacion = function($a) use ($x, $y) {
+    $total = $a + $x + $y;
+    return $total;
+};
+
+$simple = function() {
+    return 42;
+};
+
+// 5. CLASES CON PROPIEDADES Y MÉTODOS
+echo "=== Clases ===";
+
+class Persona {
+    public $nombre;
+    private $edad;
+    protected $direccion;
+    
+    public function __construct($n, $e) {
+        $this->nombre = $n;
+        $this->edad = $e;
+    }
+    
+    public function saludar() {
+        echo "Hola";
+    }
+    
+    private function calcularEdad() {
+        return $this->edad;
+    }
+    
+    protected function obtenerDireccion() {
+        return $this->direccion;
+    }
+}
+
+class Estudiante extends Persona {
+    public $carrera;
+    private $promedio;
+    
+    public function __construct($n, $e, $c) {
+        $this->nombre = $n;
+        $this->edad = $e;
+        $this->carrera = $c;
+    }
+    
+    public function estudiar() {
+        echo "Estudiando";
+    }
+    
+    public function obtenerPromedio() {
+        return $this->promedio;
+    }
+}
+
 class Producto {
     private $nombre;
     private $precio;
@@ -15,86 +148,80 @@ class Producto {
         $this->precio = $p;
     }
     
-    public function actualizar($n) {
-        $this->nombre = $n;
-    }
-}
-
-//Operadores de asignación compuesta
-$total = 100;
-$total += 50;        //PLUS_ASSIGN
-$total -= 20;        //MINUS_ASSIGN
-$total *= 2;         //TIMES_ASSIGN
-$total /= 4;         //DIVIDE_ASSIGN
-
-$mensaje = "Hola";
-$mensaje .= " Mundo"; //CONCAT_ASSIGN
-
-//Operador de objeto
-$producto = new Producto("Laptop", 1200);
-$producto->actualizar("PC");
-
-//Herencia y punteros
-interface Vendible {
-    public function vender();
-}
-
-abstract class Item {
-    abstract public function obtener();
-}
-
-class Articulo extends Item implements Vendible {
-    public function vender() {
-        return true;
+    public function actualizar($nuevoNombre) {
+        $this->nombre = $nuevoNombre;
     }
     
-    public function obtener() {
-        return "Articulo";
+    public function calcularDescuento($porcentaje) {
+        $descuento = $this->precio;
+        return $descuento;
     }
 }
 
-//Modificadores
-final class Config {
-    const VERSION = "1.0";
-}
-
-//Trait - Use
-trait Logger {
-    public function log($msg) {
-        echo $msg;
+class Vehiculo {
+    public $marca;
+    public $modelo;
+    
+    public function arrancar() {
+        echo "Arrancando";
     }
 }
 
-class Usuario {
-    use Logger;
-}
-
-//Namespace
-namespace App\Models;
-
-use App\Utils\Helper as H;
-
-//Uso de instanceof
-$art = new Articulo();
-if ($art instanceof Vendible) {
-    $art->vender();
-}
-
-//Excepciones
-try {
-    if ($total < 0) {
-        throw new Exception("Error");
+class Auto extends Vehiculo {
+    public $puertas;
+    
+    public function acelerar() {
+        echo "Acelerando";
     }
-} catch (Exception $e) {
-    echo $e;
-} finally {
-    $total = 0;
 }
 
-//Modularidad
-require 'config.php';
-include 'helpers.php';
-require_once 'database.php';
-include_once 'functions.php';
+// Instanciación y uso de clases
+$persona1 = new Persona("Juan", 25);
+$persona2 = new Persona("Maria", 30);
+$estudiante = new Estudiante("Pedro", 20, "Ingenieria");
+$producto = new Producto("Laptop", 1200);
+$auto = new Auto();
+
+// Acceso a propiedades
+$persona1->nombre;
+$estudiante->carrera;
+$auto->marca;
+
+// Llamadas a métodos
+$persona1->saludar();
+$estudiante->estudiar();
+$producto->actualizar("PC");
+$producto->calcularDescuento(10);
+$auto->arrancar();
+$auto->acelerar();
+
+// 6. COMBINACIONES COMPLEJAS
+echo "=== Combinaciones ===";
+
+// Lambda en array
+$funciones = [
+    function($x) { return $x; },
+    function($y) { return $y; }
+];
+
+// Switch con lambdas
+$operador = 1;
+switch ($operador) {
+    case 1:
+        $func = function($a, $b) { return $a + $b; };
+        break;
+    case 2:
+        $func = function($a, $b) { return $a - $b; };
+        break;
+}
+
+// Clase con arrays multidimensionales
+class Matriz {
+    private $datos;
+    
+    public function __construct() {
+        $this->datos = [[1, 2], [3, 4]];
+    }
+}
 
 ?>

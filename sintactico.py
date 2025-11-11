@@ -55,12 +55,16 @@ def p_sentencia(p):
                  | impresion
                  | declaracionVariable
                  | asignacionExpresion
+                 | asignacionCompuesta
                  | asignacionLambda
+                 | asignacionThisVar
                  | varArrayMultidimensional
                  | definicionClase
                  | asignacionInstancia
                  | llamadaMetodo SEMICOLON
                  | accesoPropiedad SEMICOLON
+                 | PHP_OPEN
+                 | PHP_CLOSE
                  | RETURN expresion SEMICOLON
                  | BREAK SEMICOLON
                  | CONTINUE SEMICOLON'''
@@ -110,6 +114,15 @@ def p_listaDeclaraciones(p):
         p[0] = [(p[1], p[3])] + p[5]
     else:
         p[0] = [(p[1], p[3])]
+    
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Asignación a $this->propiedad
+# ============================================================
+def p_asignacionThisVar(p):
+    '''asignacionThisVar : THIS_VAR ASSIGN expresion SEMICOLON
+                         | THIS_VAR ASSIGN valor SEMICOLON'''
+    p[0] = ('asignacion_this', p[1], p[3])
 
 # ============================================================
 # APORTE: Andrés Salazar (AndresSalazar19)
@@ -203,7 +216,8 @@ def p_contenidoArrayMulti(p):
 def p_elementoArrayMulti(p):
     '''elementoArrayMulti : valor
                           | arrayMultidimensional
-                          | arrayAsociativo'''
+                          | arrayAsociativo
+                          | funcionLambda'''
     p[0] = p[1]
 
 def p_varArrayMultidimensional(p):
@@ -249,6 +263,18 @@ def p_casoDefault(p):
         p[0] = ('default', p[3], False)
     else:
         p[0] = ('default', p[3], True)
+
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Asignaciones compuestas
+# ============================================================
+def p_asignacionCompuesta(p):
+    '''asignacionCompuesta : VARIABLE PLUS_ASSIGN expresion SEMICOLON
+                           | VARIABLE MINUS_ASSIGN expresion SEMICOLON
+                           | VARIABLE TIMES_ASSIGN expresion SEMICOLON
+                           | VARIABLE DIVIDE_ASSIGN expresion SEMICOLON
+                           | VARIABLE CONCAT_ASSIGN expresion SEMICOLON'''
+    p[0] = ('asignacion_compuesta', p[2], p[1], p[3])
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
@@ -422,15 +448,29 @@ def p_cuerpoConRetorno(p):
         p[0] = [('return', p[2])]
 
 def p_parametros(p):
-    '''parametros : VARIABLE
-                  | VARIABLE COMMA parametros
+    '''parametros : listaParametros
                   | '''
-    if len(p) == 1:
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
         p[0] = []
-    elif len(p) == 2:
+
+def p_listaParametros(p):
+    '''listaParametros : parametro
+                       | parametro COMMA listaParametros'''
+    if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[0] = [p[1]] + p[3]
+
+def p_parametro(p):
+    '''parametro : VARIABLE
+                 | VARIABLE ASSIGN valor
+                 | VARIABLE ASSIGN expresion'''
+    if len(p) == 2:
+        p[0] = ('param', p[1], None)
+    else:
+        p[0] = ('param_default', p[1], p[3])
 
 # ============================================================
 # APORTE: Zahid Díaz (LockHurb)
@@ -601,11 +641,14 @@ def p_valor(p):
     '''valor : INTEGER
              | FLOAT
              | VARIABLE
+             | THIS_VAR
              | SUPERGLOBALS
              | STRING
              | BOOL_TRUE
              | BOOL_FALSE
-             | NULL'''
+             | NULL
+             | arrayAsociativo
+             | arrayMultidimensional'''
     p[0] = p[1]
 
 def p_cuerpo(p):

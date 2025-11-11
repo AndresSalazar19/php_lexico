@@ -164,10 +164,16 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
     # ====== FASE LÉXICA ======
     print("Iniciando análisis léxico...\n")
     import lexico
+    # Reiniciar la lista de errores del módulo léxico (si existe) antes de tokenizar
+    if hasattr(lexico, 'errores'):
+        try:
+            lexico.errores.clear()
+        except Exception:
+            lexico.errores = []
+
     lexer_local = lex.lex(module=lexico)
     lexer_local.input(codigo)
     tokens_encontrados = []
-    errores_lexicos = list(lexico.errores) if hasattr(lexico, 'errores') else []
 
     print(f"{'TIPO':<20} {'VALOR':<35} {'LÍNEA':<10}")
     print("-" * 80)
@@ -183,6 +189,9 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
         if len(valor_str) > 32:
             valor_str = valor_str[:32] + "..."
         print(f"{tok.type:<20} {valor_str:<35} {tok.lineno:<10}")
+
+    # Obtener errores léxicos generados durante la tokenización
+    errores_lexicos = list(lexico.errores) if hasattr(lexico, 'errores') else []
 
     print("\n" + "-" * 80)
     print(f"✓ Tokens reconocidos: {len(tokens_encontrados)}")
@@ -234,7 +243,7 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
 
 if __name__ == '__main__':
     usuarios_info = [
-        ('tests/algoritmo_andres.php', 'Andrés Salazar', 'AndresSalazar19'),
+        ('tests/algoritmo_zahid.php', 'Andrés Salazar', 'AndresSalazar19'),
         ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez'),
         ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb')
     ]
