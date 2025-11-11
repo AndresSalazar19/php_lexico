@@ -243,7 +243,7 @@ def analizar_php(ruta_archivo, integrante, usuario_git='LockHurb', modo='lexico'
 
 if __name__ == '__main__':
     usuarios_info = [
-        ('tests/algoritmo_zahid.php', 'Andrés Salazar', 'AndresSalazar19'),
+        ('tests/algoritmo_andres.php', 'Andrés Salazar', 'AndresSalazar19'),
         ('tests/algoritmo_yadira.php', 'Yadira Suárez', 'YadiSuarez'),
         ('tests/algoritmo_zahid.php', 'Zahid Díaz', 'LockHurb')
     ]

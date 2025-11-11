@@ -65,10 +65,16 @@ def p_sentencia(p):
                  | accesoPropiedad SEMICOLON
                  | PHP_OPEN
                  | PHP_CLOSE
+                 | define_stmt
                  | RETURN expresion SEMICOLON
                  | BREAK SEMICOLON
                  | CONTINUE SEMICOLON'''
     p[0] = p[1]
+
+def p_define_stmt(p):
+    'define_stmt : DEFINE LPAREN STRING COMMA valor RPAREN SEMICOLON'
+    p[0] = ('define', p[3], p[5])
+
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
@@ -647,10 +653,62 @@ def p_valor(p):
              | BOOL_TRUE
              | BOOL_FALSE
              | NULL
+             | ID
              | arrayAsociativo
-             | arrayMultidimensional'''
+             | arrayMultidimensional
+             | array_func'''
     p[0] = p[1]
 
+
+def p_array_func(p):
+    '''array_func : ARRAY LPAREN array_content RPAREN
+                  | ARRAY LPAREN RPAREN'''
+    if len(p) == 5:
+        p[0] = p[3]
+    else:
+        p[0] = []
+
+
+def p_array_content(p):
+    '''array_content : array_element
+                     | array_element COMMA array_content'''
+    # array_element returns ('assoc', key, value) or ('value', v)
+    if len(p) == 2:
+        el = p[1]
+        if el[0] == 'assoc':
+            p[0] = {el[1]: el[2]}
+        else:
+            p[0] = [el[1]]
+    else:
+        first = p[1]
+        rest = p[3]
+        # rest may be list or dict
+        if isinstance(rest, dict):
+            if first[0] == 'assoc':
+                rest[first[1]] = first[2]
+                p[0] = rest
+            else:
+                # prepend value to dict values as list
+                p[0] = [first[1]] + list(rest.values())
+        else:
+            # rest is list
+            if first[0] == 'assoc':
+                # convert list to dict and add assoc
+                d = {i: v for i, v in enumerate(rest)}
+                d[first[1]] = first[2]
+                p[0] = d
+            else:
+                p[0] = [first[1]] + rest
+
+
+def p_array_element(p):
+    '''array_element : valor ARROW valor
+                     | valor'''
+    if len(p) == 4:
+        p[0] = ('assoc', p[1], p[3])
+    else:
+        p[0] = ('value', p[1])
+        
 def p_cuerpo(p):
     '''cuerpo : sentencia
               | sentencia cuerpo

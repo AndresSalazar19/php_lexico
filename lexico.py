@@ -251,7 +251,7 @@ def t_OR_OP(t):
     return t
 
 def t_NOT_OP(t):
-    r'!|\bnot\b'
+    r'!(?!=)|\bnot\b'
     return t
 
 def t_XOR_OP(t):
