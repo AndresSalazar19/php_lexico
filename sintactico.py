@@ -47,6 +47,7 @@ def p_sentencia(p):
                  | sentenciaWhile
                  | sentenciaFor
                  | sentenciaIf
+                 | sentenciaSwitch
                  | funcSinRet
                  | funcConRet
                  | varSuperGlobal
@@ -54,6 +55,12 @@ def p_sentencia(p):
                  | impresion
                  | declaracionVariable
                  | asignacionExpresion
+                 | asignacionLambda
+                 | varArrayMultidimensional
+                 | definicionClase
+                 | asignacionInstancia
+                 | llamadaMetodo SEMICOLON
+                 | accesoPropiedad SEMICOLON
                  | RETURN expresion SEMICOLON
                  | BREAK SEMICOLON
                  | CONTINUE SEMICOLON'''
@@ -171,6 +178,77 @@ def p_valorArray(p):
     '''valorArray : valor
                   | arrayAsociativo'''
     p[0] = p[1]
+
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Arrays multidimensionales
+# ============================================================
+
+def p_arrayMultidimensional(p):
+    '''arrayMultidimensional : LBRACKET contenidoArrayMulti RBRACKET
+                             | LBRACKET RBRACKET'''
+    if len(p) == 3:
+        p[0] = []
+    else:
+        p[0] = p[2]
+
+def p_contenidoArrayMulti(p):
+    '''contenidoArrayMulti : elementoArrayMulti
+                           | elementoArrayMulti COMMA contenidoArrayMulti'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[3]
+
+def p_elementoArrayMulti(p):
+    '''elementoArrayMulti : valor
+                          | arrayMultidimensional
+                          | arrayAsociativo'''
+    p[0] = p[1]
+
+def p_varArrayMultidimensional(p):
+    'varArrayMultidimensional : VARIABLE ASSIGN arrayMultidimensional SEMICOLON'
+    p[0] = ('asignacion_array_multi', p[1], p[3])
+
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Estructura SWITCH-CASE
+# ============================================================
+def p_sentenciaSwitch(p):
+    '''sentenciaSwitch : SWITCH LPAREN expresion RPAREN LBRACE listaCasos RBRACE
+                       | SWITCH LPAREN expresion RPAREN LBRACE listaCasos casoDefault RBRACE
+                       | SWITCH LPAREN expresion RPAREN LBRACE casoDefault RBRACE'''
+    if len(p) == 8:
+        if isinstance(p[6], list):
+            p[0] = ('switch', p[3], p[6], None)
+        else:
+            p[0] = ('switch', p[3], [], p[6])
+    else:
+        p[0] = ('switch', p[3], p[6], p[7])
+
+def p_listaCasos(p):
+    '''listaCasos : caso
+                  | caso listaCasos'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[2]
+
+def p_caso(p):
+    '''caso : CASE valor COLON cuerpo
+            | CASE valor COLON cuerpo BREAK SEMICOLON'''
+    if len(p) == 5:
+        p[0] = ('case', p[2], p[4], False)
+    else:
+        p[0] = ('case', p[2], p[4], True)
+
+def p_casoDefault(p):
+    '''casoDefault : DEFAULT COLON cuerpo
+                   | DEFAULT COLON cuerpo BREAK SEMICOLON'''
+    if len(p) == 4:
+        p[0] = ('default', p[3], False)
+    else:
+        p[0] = ('default', p[3], True)
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
@@ -353,6 +431,152 @@ def p_parametros(p):
         p[0] = [p[1]]
     else:
         p[0] = [p[1]] + p[3]
+
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Funciones con parámetros opcionales
+# ============================================================
+def p_funcConRetornoOpcional(p):
+    'funcConRetornoOpcional : FUNCTION ID LPAREN parametrosOpcionales RPAREN LBRACE cuerpoConRetorno RBRACE'
+    p[0] = ('funcion_parametros_opcionales', p[2], p[4], p[7])
+
+def p_parametrosOpcionales(p):
+    '''parametrosOpcionales : listaParametrosOpcionales
+                            | '''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = []
+
+def p_listaParametrosOpcionales(p):
+    '''listaParametrosOpcionales : parametroOpcional
+                                 | parametroOpcional COMMA listaParametrosOpcionales'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[3]
+
+def p_parametroOpcional(p):
+    '''parametroOpcional : VARIABLE
+                         | VARIABLE ASSIGN valor'''
+    if len(p) == 2:
+        p[0] = ('param', p[1], None)
+    else:
+        p[0] = ('param_default', p[1], p[3])
+
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Funciones lambda (anónimas)
+# ============================================================
+def p_funcionLambda(p):
+    '''funcionLambda : FUNCTION LPAREN parametros RPAREN USE LPAREN listaVariables RPAREN LBRACE cuerpoConRetorno RBRACE
+                     | FUNCTION LPAREN parametros RPAREN LBRACE cuerpoConRetorno RBRACE'''
+    if len(p) == 12:
+        # Lambda con clausura (use)
+        p[0] = ('lambda', p[3], p[7], p[10])
+    else:
+        # Lambda sin clausura
+        p[0] = ('lambda', p[3], None, p[6])
+
+def p_listaVariables(p):
+    '''listaVariables : VARIABLE
+                      | VARIABLE COMMA listaVariables'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[3]
+
+def p_asignacionLambda(p):
+    'asignacionLambda : VARIABLE ASSIGN funcionLambda SEMICOLON'
+    p[0] = ('asignacion_lambda', p[1], p[3])
+
+# ============================================================
+# APORTE: Zahid Díaz (LockHurb)
+# Definición de clases con propiedades y métodos
+# ============================================================
+def p_definicionClase(p):
+    '''definicionClase : CLASS ID LBRACE cuerpoClase RBRACE
+                       | CLASS ID EXTENDS ID LBRACE cuerpoClase RBRACE'''
+    if len(p) == 6:
+        p[0] = ('clase', p[2], None, p[4])
+    else:
+        p[0] = ('clase', p[2], p[4], p[6])
+
+def p_cuerpoClase(p):
+    '''cuerpoClase : elementoClase
+                   | elementoClase cuerpoClase
+                   | '''
+    if len(p) == 1:
+        p[0] = []
+    elif len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[2]
+
+def p_elementoClase(p):
+    '''elementoClase : propiedad
+                     | metodo
+                     | constructor'''
+    p[0] = p[1]
+
+def p_propiedad(p):
+    '''propiedad : visibilidad VARIABLE SEMICOLON
+                 | visibilidad VARIABLE ASSIGN valor SEMICOLON'''
+    if len(p) == 4:
+        p[0] = ('propiedad', p[1], p[2], None)
+    else:
+        p[0] = ('propiedad', p[1], p[2], p[4])
+
+def p_metodo(p):
+    '''metodo : visibilidad FUNCTION ID LPAREN parametros RPAREN LBRACE cuerpo RBRACE
+              | visibilidad FUNCTION ID LPAREN parametros RPAREN LBRACE cuerpoConRetorno RBRACE'''
+    p[0] = ('metodo', p[1], p[3], p[5], p[8])
+
+def p_constructor(p):
+    'constructor : visibilidad FUNCTION CONSTRUCT LPAREN parametros RPAREN LBRACE cuerpo RBRACE'
+    p[0] = ('constructor', p[1], p[5], p[8])
+
+def p_visibilidad(p):
+    '''visibilidad : PUBLIC
+                   | PRIVATE
+                   | PROTECTED
+                   | '''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = 'public'  # Por defecto en PHP
+
+def p_instanciaClase(p):
+    '''instanciaClase : NEW ID LPAREN argumentos RPAREN
+                      | NEW ID LPAREN RPAREN'''
+    if len(p) == 6:
+        p[0] = ('instancia', p[2], p[4])
+    else:
+        p[0] = ('instancia', p[2], [])
+
+def p_argumentos(p):
+    '''argumentos : expresion
+                  | expresion COMMA argumentos'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[3]
+
+def p_asignacionInstancia(p):
+    'asignacionInstancia : VARIABLE ASSIGN instanciaClase SEMICOLON'
+    p[0] = ('asignacion_instancia', p[1], p[3])
+
+def p_accesoPropiedad(p):
+    'accesoPropiedad : VARIABLE OBJECT_ARROW ID'
+    p[0] = ('acceso_propiedad', p[1], p[3])
+
+def p_llamadaMetodo(p):
+    '''llamadaMetodo : VARIABLE OBJECT_ARROW ID LPAREN argumentos RPAREN
+                     | VARIABLE OBJECT_ARROW ID LPAREN RPAREN'''
+    if len(p) == 7:
+        p[0] = ('llamada_metodo', p[1], p[3], p[5])
+    else:
+        p[0] = ('llamada_metodo', p[1], p[3], [])
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)

@@ -46,6 +46,7 @@ reserved_andres = {
     'echo': 'ECHO',
     'array': 'ARRAY',
     'define': 'DEFINE',
+    '__construct': 'CONSTRUCT',
 }
 
 # Lista de tokens
@@ -118,7 +119,7 @@ reserved_zahid = {
 #Tokens Zahid
 tokens_zahid = [
     'THIS_VAR',  #Variables de instancia
-    'OBJECT_OP', #Operador para objetos
+    'OBJECT_ARROW', #Operador para objetos
     'PLUS_ASSIGN',
     'MINUS_ASSIGN',
     'TIMES_ASSIGN',
@@ -126,23 +127,6 @@ tokens_zahid = [
     'CONCAT_ASSIGN',
     'BACKSLASH',
 ]
-
-# ============================================================
-# REGLAS DE TOKENS
-# ============================================================
-
-#Función de variable de instancia
-def t_THIS_VAR(t):
-    r'\$this->([a-zA-Z_][a-zA-Z0-9_]*)'
-    return t
-
-t_PLUS_ASSIGN = r'\+='
-t_MINUS_ASSIGN = r'-='
-t_TIMES_ASSIGN = r'\*='
-t_DIVIDE_ASSIGN = r'/='
-t_CONCAT_ASSIGN = r'\.='
-t_BACKSLASH = r'\\'
-t_OBJECT_OP = r'->'
 
 # ============================================================
 # APORTE: Yadira Suarez (YadiSuarez)
@@ -190,17 +174,27 @@ def t_PHP_CLOSE(t):
     r'\?>'
     return t
 
-# Operadores de incremento/decremento (antes que PLUS y MINUS)
+#Función de variable de instancia
+def t_THIS_VAR(t):
+    r'\$this->([a-zA-Z_][a-zA-Z0-9_]*)'
+    return t
+
+# Operadores de asignación compuesta
+t_PLUS_ASSIGN = r'\+='
+t_MINUS_ASSIGN = r'-='
+t_TIMES_ASSIGN = r'\*='
+t_DIVIDE_ASSIGN = r'/='
+t_CONCAT_ASSIGN = r'\.='
+
+# Operadores de incremento/decremento
 t_INCREMENT = r'\+\+'
 t_DECREMENT = r'--'
 
-# Operadores aritméticos
-t_PLUS = r'\+'
-t_MINUS = r'-'
-t_TIMES = r'\*'
-t_DIVIDE = r'/'
-t_MOD = r'%'
-t_POW = r'\*\*'
+# Operador de objetos
+t_OBJECT_ARROW = r'->'
+
+# Flecha para arrays asociativos
+t_ARROW = r'=>'
 
 # Operadores de comparación (orden importante: === antes que ==)
 t_IDENTICAL = r'==='
@@ -211,8 +205,13 @@ t_GE = r'>='
 t_LT = r'<'
 t_GT = r'>'
 
-# Flecha para arrays asociativos
-t_ARROW = r'=>'
+# Operadores aritméticos
+t_POW = r'\*\*'
+t_PLUS = r'\+'
+t_MINUS = r'-'
+t_TIMES = r'\*'
+t_DIVIDE = r'/'
+t_MOD = r'%'
 
 # Delimitadores básicos
 t_SEMICOLON = r';'
@@ -222,6 +221,7 @@ t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
+t_BACKSLASH = r'\\'
 t_COMMA = r','
 t_COLON = r':'
 t_DOT = r'\.'
